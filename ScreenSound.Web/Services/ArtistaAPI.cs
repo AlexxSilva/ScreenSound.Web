@@ -1,4 +1,5 @@
 ﻿using ScreenSound.Web.Repositories;
+using ScreenSound.Web.Request;
 using ScreenSound.Web.Response;
 
 namespace ScreenSound.Web.Services
@@ -23,7 +24,13 @@ namespace ScreenSound.Web.Services
             //return await _httpClient.GetFromJsonAsync<ICollection<ArtistaResponse>>("artistas");
             return _repository.GetArtistasAsync();
         }
-    
-      
+
+        public Task<bool> AddArtistaAsync(ArtistaRequest artista)
+        {
+            //return await _httpClient.GetFromJsonAsync<ICollection<ArtistaResponse>>("artistas");
+            return _repository.AddArtistaAsync(artista);
+        }
+
+
     }
 }

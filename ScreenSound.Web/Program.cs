@@ -1,3 +1,4 @@
+using MudBlazor.Services;
 using ScreenSound.Web.Components;
 using ScreenSound.Web.Repositories;
 using ScreenSound.Web.Services;
@@ -11,6 +12,8 @@ builder.Services.AddRazorComponents()
 //builder.Services.AddTransient<ArtistaAPI>();
 builder.Services.AddScoped<IArtistaRepository, ArtistaRepository>();
 builder.Services.AddScoped<ArtistaAPI>();
+
+builder.Services.AddMudServices();
 
 //builder.Services.AddHttpClient("API", client =>
 //{
