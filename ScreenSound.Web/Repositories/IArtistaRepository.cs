@@ -7,5 +7,7 @@ namespace ScreenSound.Web.Repositories
     {
         Task<bool> AddArtistaAsync(ArtistaRequest artista);
         Task<ICollection<ArtistaResponse>> GetArtistasAsync();
+        Task<bool> DeleteArtistaAsync(int id);
+        Task<ArtistaResponse?> ListarArtistaPorNomeAsync(string nome);
     }
 }

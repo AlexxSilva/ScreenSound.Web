@@ -27,10 +27,18 @@ namespace ScreenSound.Web.Services
 
         public Task<bool> AddArtistaAsync(ArtistaRequest artista)
         {
-            //return await _httpClient.GetFromJsonAsync<ICollection<ArtistaResponse>>("artistas");
             return _repository.AddArtistaAsync(artista);
         }
 
 
+        public Task<bool> DeleteArtistaAsync(int Id)
+        {
+            return _repository.DeleteArtistaAsync(Id);
+        }
+
+        public Task<ArtistaResponse?> ListarArtistaPorNomeAsync(string Nome)
+        {
+            return _repository.ListarArtistaPorNomeAsync(Nome);
+        }
     }
 }
