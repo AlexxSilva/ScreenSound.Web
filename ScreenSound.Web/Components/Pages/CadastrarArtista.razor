@@ -8,18 +8,58 @@
 
     <MudForm>
 
-        <MudTextField Class="mt-4" T="string" Placeholder="Nome do Artista"
+        <MudTextField Class="mt-4" T="string" 
                       Variant="Variant.Outlined"
+                      Label="NomeArtista"
                       @bind-Value="nome"
                       Required="true"
                       RequiredError="Campo obrigatório." />
 
-        <MudTextField Class="mt-4" T="string" Placeholder="Biografia do artista"
+        <MudTextField Class="mt-4" T="string" 
+                      Label="Biografia"
                       Variant="Variant.Outlined"
                       Lines="4"
                       @bind-Value="biografia"
                       Required="true"
                       RequiredError="Campo obrigatório." />
+
+
+        <MudSelect Class="mt-4"
+                   T="string"
+                   Label="Gênero"
+                   Variant="Variant.Outlined"
+                   @bind-Value="genero"
+                   Required="true"
+                   RequiredError="Selecione um gênero.">
+
+            @foreach (var item in generos)
+            {
+                <MudSelectItem T="string" Value="@item">
+                    @item
+                </MudSelectItem>
+            }
+
+        </MudSelect>
+
+
+        @if (!string.IsNullOrWhiteSpace(fileImage))
+        {
+            <MudImage Src="@fileImage"
+                      Style="width:200px;height:200px;object-fit:cover;"
+                      Class="mt-4" />
+        }
+
+        <MudFileUpload T="IBrowserFile"
+               FilesChanged="UploadFile"
+               Class="mt-6">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.PhotoCamera">
+                    Foto de Perfil
+                </MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+
 
         <div class="d-flex align-center justify-space-between mt-4">
             <MudButton Variant="Variant.Filled"
@@ -37,15 +77,47 @@
 
     private string? nome;
     private string? biografia;
+    private string? genero;
+
+
+    private string? fileImage;
+    private string? fotoPerfil;
+
+    private List<string> generos = new()
+{
+    "Rock",
+    "MPB",
+    "Samba",
+    "Pagode",
+    "Sertanejo"
+};
 
 
     private async Task Cadastrar()
     {
         Console.WriteLine("Entrou no método");
-        var request = new ArtistaRequest(nome, "Rock", biografia);
+        var request = new ArtistaRequest(nome, genero, biografia, fotoPerfil);
         var sucesso = await artistaAPI.AddArtistaAsync(request);
         navigationManager.NavigateTo("/Artistas");
     }
+
+    private async Task UploadFile(IBrowserFile file)
+    {
+        long maxFileSize = 1024 * 1024 * 15;
+        var format = "image/jpeg";
+        var resizedImage = await file.RequestImageFileAsync(format, 200, 200);
+
+        using var fileStream = resizedImage.OpenReadStream();
+        using var memoryStream = new MemoryStream();
+        await fileStream.CopyToAsync(memoryStream);
+
+        var imageUpload = Convert.ToBase64String(memoryStream.ToArray());
+
+        fileImage = $"data:{format};base64,{imageUpload}";
+
+        fotoPerfil = imageUpload;
+    }
+
 }
 
 

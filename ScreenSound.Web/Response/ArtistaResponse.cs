@@ -7,5 +7,7 @@
         public string Genero { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
         public int Albuns { get; set; }
+
+        public string FotoPerfil { get; set; }  
     }
 }

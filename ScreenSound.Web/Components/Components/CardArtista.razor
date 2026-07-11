@@ -1,5 +1,6 @@
 ﻿<MudCard>
-    <MudCardMedia Image="images/cardArtista.png"></MudCardMedia>
+    <MudCardMedia Image="@($"data:image/jpeg;base64,{Artista!.FotoPerfil}")"
+                  Height="250" />
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h6">@Artista!.Nome</MudText>
