@@ -9,8 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-//builder.Services.AddTransient<ArtistaAPI>();
-builder.Services.AddScoped<IArtistaRepository, ArtistaRepository>();
+builder.Services.AddSingleton<IArtistaRepository, ArtistaRepository>(); //SIngleton pq é um objeto
+//de memoria unico
 builder.Services.AddScoped<ArtistaAPI>();
 
 builder.Services.AddMudServices();

@@ -1,4 +1,5 @@
-﻿using ScreenSound.Web.Request;
+﻿using ScreenSound.Web.Components.Pages;
+using ScreenSound.Web.Request;
 using ScreenSound.Web.Response;
 
 namespace ScreenSound.Web.Repositories
@@ -29,9 +30,17 @@ namespace ScreenSound.Web.Repositories
             //new() { Id = 20, Nome = "Foo Fighters", Genero = "Alternative Rock", Bio = "Banda formada por Dave Grohl", Albuns = 11 }
          ];
 
+        private readonly List<MusicaResponse> _musicas = [];
+
+
         public Task<ICollection<ArtistaResponse>> GetArtistasAsync()
         {
             return Task.FromResult<ICollection<ArtistaResponse>>(_artistas);
+        }
+
+        public Task<ICollection<MusicaResponse>> GetMusicasAsync()
+        {
+            return Task.FromResult<ICollection<MusicaResponse>>(_musicas);
         }
 
         public Task<bool> AddArtistaAsync(ArtistaRequest artista)
@@ -57,9 +66,32 @@ namespace ScreenSound.Web.Repositories
             return Task.FromResult(removido);
         }
 
+
+
         public Task<ArtistaResponse?> ListarArtistaPorNomeAsync(string nome)
         {
             return Task.FromResult(_artistas.FirstOrDefault(a => a.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        public Task<bool> AddMusicaAsync(MusicaRequest musica)
+        {
+            var novaMusica = new MusicaResponse
+            {
+                Nome = musica.Nome,
+                AnoLancamento = musica.AnoLancamento,
+                ArtistaId = musica.ArtistaId,
+                Generos = musica.Generos
+            };
+
+            _musicas.Add(novaMusica);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> DeleteMusicaAsync(string musica)
+        {
+            var removido = _musicas.RemoveAll(a => a.Nome == musica) > 0;
+            return Task.FromResult(removido);
         }
     }
 }

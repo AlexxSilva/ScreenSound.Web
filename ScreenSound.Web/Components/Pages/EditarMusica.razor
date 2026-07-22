@@ -1,0 +1,147 @@
+﻿@page "/EditarMusica/{NomeMusica}"
+
+@inject ArtistaAPI artistaAPI
+@inject NavigationManager navigationManager
+
+
+<MudPaper Class="px-8 pt-2 pb-4 mx-12 my-8" Justify="Justify.Center">
+
+    <MudText Class="mt-8" Typo="Typo.h4">Edição de Musica</MudText>
+
+    <MudForm>
+
+        <MudTextField Class="mt-4" T="string" Placeholder="Nome da música/canção"
+                      @bind-Value="nome"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+
+
+        <MudSelect Class="mt-4" T="MusicaResponse" ValueChanged="@MusicaSelecionado" Label="Artistas"
+                   Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+            @if (musicas is not null)
+            {
+                @foreach (var artista in musicas)
+                {
+                    <MudSelectItem Value="@artista">
+                        @artista.Nome
+                    </MudSelectItem>
+                }
+            }
+        </MudSelect>
+
+        <MudTextField Class="mt-4" T="int" Placeholder="Ano de lançamento"
+                      @bind-Value="anoLancamento"
+                      Variant="Variant.Outlined"
+                      Lines="1"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+
+
+
+
+        <MudSelect Class="mt-4" T="string" Label="Gêneros" ValueChanged="@GeneroSelecionado"
+                   Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var item in generos)
+            {
+                <MudSelectItem T="string" Value="@item">
+                    @item
+                </MudSelectItem>
+            }
+            @if (GenerosSelecionados is not null)
+            {
+                foreach (var genero in GenerosSelecionados)
+                {
+                    <MudAlert Severity="Severity.Info">@(genero) adicionado como gênero da música.</MudAlert>
+                }
+
+            }
+        </MudSelect>
+
+        <div class="d-flex align-center justify-space-between mt-4">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       @onclick="Deletar"
+                       Class="ml-auto">
+                Deletar
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Info"
+                       Class="ml-3">
+                Voltar
+            </MudButton>
+        </div>
+
+    </MudForm>
+
+</MudPaper>
+
+
+
+@code {
+
+    private int anoLancamento;
+    private string? nome;
+    [Parameter]
+    public string? NomeMusica { get; set; }
+
+    private ICollection<MusicaResponse>? musicas;
+
+    private MusicaResponse? musicaSelecionada { get; set; }
+    private List<string>? GenerosSelecionados { get; set; } = new();
+
+
+    private List<string> generos = new()
+{
+    "Rock",
+    "MPB",
+    "Samba",
+    "Pagode",
+    "Sertanejo"
+};
+
+    protected override async Task OnInitializedAsync()
+    {
+        musicas = await artistaAPI.GetMusicasAsync();
+
+        musicaSelecionada = musicas
+            .FirstOrDefault(m => m.Nome == NomeMusica);
+
+        if (musicaSelecionada is not null)
+        {
+            nome = musicaSelecionada.Nome;
+            anoLancamento = musicaSelecionada.AnoLancamento;
+
+            // Caso sua música tenha gêneros
+            if (musicaSelecionada.Generos is not null)
+            {
+                GenerosSelecionados = musicaSelecionada.Generos.ToList();
+            }
+        }
+    }
+
+    private void MusicaSelecionado(MusicaResponse musica)
+    {
+        musicaSelecionada = musica;
+    }
+
+    private void GeneroSelecionado(string genero)
+    {
+        if (GenerosSelecionados is not null)
+        {
+            if (!GenerosSelecionados.Contains(genero))
+            {
+                GenerosSelecionados.Add(genero);
+            }
+        }
+    }
+
+    public async Task Deletar()
+    {
+     
+        await artistaAPI.DeleteMusicaAsync(musicaSelecionada.Nome);
+        // Limpar os campos após o cadastro
+
+        navigationManager.NavigateTo("/MusicasPorArtista");
+    }
+}
